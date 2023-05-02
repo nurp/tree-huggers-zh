@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Quick Start - Leaflet</title>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" /> -->
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+  <style>
+    .marker {
+      display: flex;
+      align-items: center;
+    }
+
+    .circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <label for="tree-type">Choose a tree type:</label>
+        <select id="tree-type">
+          <option value="">--Please choose a tree type--</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="checkbox-inline">
+          <input type="checkbox" onclick="holdMarkers(this)"> Hold markers
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <button type="button" class="btn btn-link" onclick="showAllTrees()">Show all trees</button>
+        <button type="button" class="btn btn-link" onclick="showAllFruitTrees(this)">Show all fruit trees</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div id="map" style="width: 700px; height: 500px;"></div>
+        <div id="counter"></div>
+      </div>
+      <div class="col-md-4">
+        <div id="info"></div>
+      </div>
+    </div>
+    <div class="row" id="colorbox"> </div>
+    <div class="row">
+      <div class="col">
+        <button type="button" class="btn btn-primary" onclick="checkAll(this)" ontouchstart="checkAll(this)">Uncheck
+          all</button>
+        <button type="button" class="btn btn-link" onclick="applyFilters()" ontouchstart="applyFilters()">Apply
+          filter</button>
+      </div>
+    </div>
+      <div class="row">
+        <div class="input-group mb-3 col-md-6">
+          <input type="text" id="search-by-id" class="form-control" placeholder="Search by Tree Id" aria-describedby="search-by-id-button">
+          <button class="btn btn-outline-secondary" type="button" id="search-by-id-button" onclick="searchById()">Go</button>
+        </div>
+        <div class="input-group mb-3 col-md-6">
+          <input type="text" id="search-by-poiid" class="form-control" placeholder="Search by PoiId" aria-describedby="search-by-poiid-button">
+          <button class="btn btn-outline-secondary" type="button" id="search-by-poiid-button" onclick="searchByPoiId()">Go</button>
+        </div>
+        <!-- <form class="form-inline">
+          <div class="form-group mx-sm-3 mb-2">
+            <label for="searchInput" class="sr-only">Search</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-primary mb-2">Search</button>
+        </form>      -->
+    </div>
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label for="baumtyp">Kronendurchmesser</label>
+        <select class="form-control" id="kronendurchmesser">
+          <option value="">Alle</option>
+          <!-- Populate options using JavaScript loop -->
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="quartier">Quartier</label>
+        <select class="form-control" id="quartier">
+          <option value="">Alle</option>
+          <!-- Populate options using JavaScript loop -->
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="form-group">
+          <label for="pflanzjahr">Pflanzjahr:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="pflanzjahr_min" name="pflanzjahr_min" placeholder="min"
+              min="1665" max="2023">
+            <span class="input-group-text">-</span>
+            <input type="number" class="form-control" id="pflanzjahr_max" name="pflanzjahr_max" placeholder="max"
+              min="1665" max="2023">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label for="baumtyp">Baumtyp</label>
+        <select class="form-control" id="baumtyp">
+          <option value="">Alle</option>
+          <!-- Populate options using JavaScript loop -->
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="genauigkeit">Genauigkeit</label>
+        <select class="form-control" id="genauigkeit">
+          <option value="">Alle</option>
+          <!-- Populate options using JavaScript loop -->
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="kategorie">Kategorie</label>
+        <select class="form-control" id="kategorie">
+          <option value="">Alle</option>
+          <!-- Populate options using JavaScript loop -->
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="status">Status</label>
+        <select class="form-control" id="status">
+          <option value="">Alle</option>
+          <!-- Populate options using JavaScript loop -->
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div id="checkbox-container"></div>
+      </div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename= 'js/queries.js') }}"></script>
+  <script src="{{ url_for('static', filename= 'js/index.js') }}"></script>
+</body>
+
+</html>
