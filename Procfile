@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app
+web: sh heroku.sh
