@@ -2,6 +2,8 @@ from flask import Flask, request, url_for, render_template, jsonify
 import sqlite3
 from werkzeug.exceptions import abort
 import time
+import os
+
 
 def create_app():
     app = Flask(__name__)
@@ -195,3 +197,8 @@ def getTreeRows(rows):
             outer_map[genusId][typeId] = []
         outer_map[genusId][typeId].append(tree)
     return outer_map
+
+app = create_app()
+
+if __name__ == '__main__':
+    app.run()
