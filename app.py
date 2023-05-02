@@ -5,13 +5,7 @@ import time
 import os
 
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_mapping(
-        SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev_key'
-    )
-
-    return app
+app = Flask(__name__)
 
 def get_db_connection():
     conn = sqlite3.connect('tree.db')
@@ -197,8 +191,6 @@ def getTreeRows(rows):
             outer_map[genusId][typeId] = []
         outer_map[genusId][typeId].append(tree)
     return outer_map
-
-app = create_app()
 
 if __name__ == '__main__':
     app.run()
