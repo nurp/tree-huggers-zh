@@ -181,7 +181,6 @@ function updateMarkers(map, markersLayer) {
   markersLayer.addTo(map);
   document.getElementById("counter").textContent = treeCount.toString() + " tree(s) showing";
   showColorCodes();
-  showTreeCheckboxes();
 }
 
 function showTreeCheckboxes(bShow) {
