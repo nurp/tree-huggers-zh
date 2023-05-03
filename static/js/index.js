@@ -87,23 +87,33 @@ function fillDropDownWithTrees() {
     // if (!bHoldMarkers) clearVisibleTrees();
     selectedGenusKey = this.value;
     const container = document.getElementById("checkbox-container");
-    const baumArtLatNames = genusMap[selectedGenusKey].baumArtLatNames;
-    let checkboxesHtml = "";
-    baumArtLatNames.forEach((elem) => {
-      count = elem['count'];
-      text = `${elem['baumArtLatName']} (${count})`;
-      id = baumArtObjValueKey[elem['baumArtLatName']];
-      checkboxesHtml += getCheckboxFor(text, id);
-    });
-    container.innerHTML = addCheckboxesToForm(checkboxesHtml);
+    if (selectedGenusKey === "") {
+      showTreeCheckboxes(false);
+      container.innerHTML = "";
+    } else {
+      const baumArtLatNames = genusMap[selectedGenusKey].baumArtLatNames;
+      let checkboxesHtml = "";
+      baumArtLatNames.forEach((elem) => {
+        count = elem['count'];
+        text = `${elem['baumArtLatName']} (${count})`;
+        id = baumArtObjValueKey[elem['baumArtLatName']];
+        checkboxesHtml += getCheckboxFor(text, id);
+      });
+      container.innerHTML = addCheckboxesToForm(checkboxesHtml);
+      showTreeCheckboxes(true);
+    }
   });
 }
 
+let treeCount = 0;
+let visibleColors = {};
 
-let visibleColors = new Map();
 function updateMarkers(map, markersLayer) {
-  let treeCount = 0;
-  if (!bHoldMarkers) markersLayer.clearLayers();
+  if (!bHoldMarkers) {
+    visibleColors = {};
+    treeCount = 0;
+    markersLayer.clearLayers();
+  }
   var myRenderer = L.canvas({ padding: 0.5 });
   for (const [outerKey, outerObj] of Object.entries(visibleTrees)) {
     for (const [innerKey, innerObj] of Object.entries(outerObj)) {
@@ -112,7 +122,7 @@ function updateMarkers(map, markersLayer) {
         tree = tree[1]; // why php puts the index as first element of the array?!
         tree['BaumGattungLat'] = baumGattungObj[outerKey];
         tree['BaumArtLat'] = baumArtObj[innerKey];
-
+        visibleColors[baumGattungObj[outerKey]] = colorsObj[outerKey];
         var marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], { renderer: myRenderer, radius: 3, myData: tree, color: colorsObj[outerKey] })
           .bindPopup(tree.baumname_deu + " " + baumArtObj[innerKey]);
         marker.on('click', function (e) {
@@ -133,7 +143,7 @@ function updateMarkers(map, markersLayer) {
           innerHtml += `
           <tr>
             <td>BaumArtLat</td>
-            <td>${tree['BaumArtLat'] }</td>
+            <td>${tree['BaumArtLat']}</td>
           </tr>
           <tr>
             <td>BaumGattungLat</td>
@@ -171,10 +181,19 @@ function updateMarkers(map, markersLayer) {
   markersLayer.addTo(map);
   document.getElementById("counter").textContent = treeCount.toString() + " tree(s) showing";
   showColorCodes();
+  showTreeCheckboxes();
+}
+
+function showTreeCheckboxes(bShow) {
+  if (bShow) {
+    document.getElementById('showTreeCheckboxes').classList.remove('hide');
+  } else {
+    document.getElementById('showTreeCheckboxes').classList.add('hide');
+  }
 }
 
 function showColorCodes() {
-  let container = document.getElementById("colorbox");
+  let colorbox = document.getElementById("colorbox");
   colorbox.innerHTML = "";
   const sortedKeys = [...Object.keys(visibleColors)].sort();
   sortedKeys.forEach((key) => {
@@ -194,67 +213,23 @@ async function applyFilters() {
   baumArtIds = []
   const container = document.getElementById("checkbox-container");
   const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-  
+
   checkboxes.forEach(function (checkbox) {
     if (checkbox.checked) {
       baumArtIds.push(checkbox.value);
     }
   });
-
-  await getTrees({baumArtIds, filterBaumtypValue, filterGenauigkeitValue, filterKategorieValue, filterStatusValue, filterQuartierValue});
+  document.getElementById("apply-filter-spinner").classList.remove('hide');
+  await getTrees({ baumArtIds, filterBaumtypValue, filterGenauigkeitValue, filterKategorieValue, filterStatusValue, filterQuartierValue });
   updateMarkers(map, markersLayer);
+  document.getElementById("apply-filter-spinner").classList.add('hide');
 }
 
-function showHideSpecies(checkbox) {
-  if (checkbox.checked) {
-    addToVisibleTrees(selectedGenusKey, checkbox.value);
-  } else {
-    removeFromVisibleTrees(selectedGenusKey, checkbox.value);
-  }
-}
-
-function removeFromVisibleTrees(genusKey, speciesKey) {
-  visibleTrees.get(genusKey).set(speciesKey, []);
-}
-
-function showAllFruitTrees(checkbox) {
-  let obstTrees = new Map();
-  visibleTrees.forEach((outerMap, outerKey) => {
-    outerMap.forEach((innerMap, innerKey) => {
-      let originalTrees = visibleTrees.get(outerKey).get(innerKey);
-      originalTrees.forEach((tree) => {
-        if (tree.properties.baumtyp == "6") {
-          if (!obstTrees.has(outerKey)) {
-            obstTrees.set(outerKey, new Map());
-          }
-          if (!obstTrees.get(outerKey).has(innerKey)) {
-            obstTrees.get(outerKey).set(innerKey, []);
-          }
-          let trees = obstTrees.get(outerKey).get(innerKey);
-          trees.push(tree);
-          obstTrees.get(outerKey).set(innerKey, trees);
-        }
-      });
-    });
-  });
-  // obstTrees = new Map([...visibleTrees.entries()].map(([outerKey, innerMap]) => {
-  //   const filteredInnerMap = new Map([...innerMap.entries()].map(([innerKey, array]) => {
-  //     const filteredArray = array.filter((item) => item.properties.baumtyp == "6");
-  //     return [innerKey, filteredArray];
-  //   }));
-  //   return [outerKey, filteredInnerMap];
-  // }));
-  visibleTrees = obstTrees;
-  showColorCodes();
+async function showAllTrees() {
+  document.getElementById("all-trees-spinner").classList.remove('hide');
+  await getAllTrees();
   updateMarkers(map, markersLayer);
-}
-
-function showAllTrees() {
-  for (const [key, innerMap] of genusMap) {
-    const destInnerMap = new Map(innerMap);
-    visibleTrees.set(key, destInnerMap);
-  }
-  updateMarkers(map, markersLayer);
+  document.getElementById("all-trees-spinner").classList.add('hide');
 }
 
 function getCheckboxFor(key, value) {
@@ -265,7 +240,7 @@ function getCheckboxFor(key, value) {
       </label>
       </div>
       `;
-      // <input type="checkbox" name="tree_type" value="${value}" checked=true onclick="showHideSpecies(this)"> ${value}
+  // <input type="checkbox" name="tree_type" value="${value}" checked=true onclick="showHideSpecies(this)"> ${value}
 }
 
 function addCheckboxesToForm(checkboxes) {
@@ -344,18 +319,11 @@ async function searchByPoiId() {
     });
 }
 
-function fillDropdown(selectObject, keysObject){
+function fillDropdown(selectObject, keysObject) {
   // sort the dropdowns by their values
   const sortedKeys = Object.entries(keysObject)
     .sort((a, b) => a[1].localeCompare(b[1]))
     .map(entry => entry[0]);
-
-  // const obj = { a: 3, b: 1, c: 2 };
-  // const sortedKeys = Object.entries(obj)
-  // .sort((a, b) => a[1] - b[1])
-  // .map(entry => entry[0]);
-
-  console.log(sortedKeys); 
 
   for (key in sortedKeys) {
     let realkey = sortedKeys[key];

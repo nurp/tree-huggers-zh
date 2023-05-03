@@ -2,7 +2,6 @@ from flask import Flask, request, url_for, render_template, jsonify
 import sqlite3
 from werkzeug.exceptions import abort
 import time
-import os
 
 
 app = Flask(__name__)
@@ -76,7 +75,7 @@ def allTrees():
 
 @app.route('/api/trees',  methods=["GET"])
 def trees():
-    query = "SELECT * FROM Trees WHERE "
+    query = "SELECT * FROM Trees "
     conditions = []
 
     baumGattungIds = request.args.get('baumGattungIds')
@@ -114,10 +113,10 @@ def trees():
         kategorie_condition = f"KategorieId = '{kategorie}'"
         conditions.append(kategorie_condition)
 
-    query += " AND ".join(conditions)
-
-    print(query)
-
+    if len(conditions):
+        query += "WHERE "
+        query += " AND ".join(conditions)
+    
     conn = get_db_connection()
     rows = conn.execute(query).fetchall()
     outer_map = getTreeRows(rows)
