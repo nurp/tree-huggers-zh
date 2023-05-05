@@ -405,13 +405,13 @@ async function main() {
     applyFilters();
   });
 
-  const filterByIdForm = document.getElementById("search-by-id-button");
+  const filterByIdForm = document.getElementById("search-id-form");
   filterByIdForm.addEventListener("submit", (event) => {
     event.preventDefault();
     searchById();
   });
   
-  const filterByPoIdForm = document.getElementById("search-by-poiid-button");
+  const filterByPoIdForm = document.getElementById("search-poiid-form");
   filterByPoIdForm.addEventListener("submit", (event) => {
     event.preventDefault();
     searchByPoiId();

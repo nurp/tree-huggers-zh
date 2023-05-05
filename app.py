@@ -4,10 +4,8 @@ from werkzeug.exceptions import abort
 import time
 
 # todo
-# search in the visible map area
-# locate me button
+# list view to be able to sort trees by age or gattung and mouse over to highlight the tree
 # clear filters
-# make enter key "apply filters"
 # add caching
 # add stats
 # allow uploading photos
