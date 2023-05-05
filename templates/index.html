@@ -67,33 +67,35 @@
       </div>
     </div>
     <div class="row">
-      <div class="input-group mb-3 col-md-6">
-        <input type="text" id="search-by-id" class="form-control" placeholder="Search by Tree Id"
-          aria-describedby="search-by-id-button">
-        <button class="btn btn-outline-secondary" type="button" id="search-by-id-button"
-          onclick="searchById()">Go</button>
+      <div class="col-md-4">
+        <div class="input-group mb-3">
+          <input type="text" id="search-by-id" class="form-control" placeholder="Search by Tree Id"
+            aria-describedby="search-by-id-button">
+          <button class="btn btn-outline-secondary" type="button" id="search-by-id-button"
+            onclick="searchById()">Go</button>
+        </div>
       </div>
-      <div class="input-group mb-3 col-md-6">
-        <input type="text" id="search-by-poiid" class="form-control" placeholder="Search by PoiId"
-          aria-describedby="search-by-poiid-button">
-        <button class="btn btn-outline-secondary" type="button" id="search-by-poiid-button"
-          onclick="searchByPoiId()">Go</button>
+      <div class="col-md-4">
+        <div class="input-group mb-3">
+          <input type="text" id="search-by-poiid" class="form-control" placeholder="Search by PoiId"
+            aria-describedby="search-by-poiid-button">
+          <button class="btn btn-outline-secondary" type="button" id="search-by-poiid-button"
+            onclick="searchByPoiId()">Go</button>
+        </div>
       </div>
-      <!-- <form class="form-inline">
-          <div class="form-group mx-sm-3 mb-2">
-            <label for="searchInput" class="sr-only">Search</label>
-            <input type="text" class="form-control" id="searchInput" placeholder="Search">
-          </div>
-          <button type="submit" class="btn btn-primary mb-2">Search</button>
-        </form>      -->
     </div>
     <div class="row">
       <div class="col-md-3 mb-3">
-        <label for="baumtyp">Kronendurchmesser</label>
-        <select class="form-control" id="kronendurchmesser">
-          <option value="">Alle</option>
-          <!-- Populate options using JavaScript loop -->
-        </select>
+        <div class="form-group">
+          <label for="kronendurchmesser">Kronendurchmesser [0-40]):</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="kronendurchmesser_min" name="kronendurchmesser_min"
+              placeholder="min" min="0" max="40">
+            <span class="input-group-text">-</span>
+            <input type="number" class="form-control" id="kronendurchmesser_max" name="kronendurchmesser_max"
+              placeholder="max" min="0" max="40">
+          </div>
+        </div>
       </div>
       <div class="col-md-3 mb-3">
         <label for="quartier">Quartier</label>
@@ -104,7 +106,7 @@
       </div>
       <div class="col-md-3 mb-3">
         <div class="form-group">
-          <label for="pflanzjahr">Pflanzjahr:</label>
+          <label for="pflanzjahr">Pflanzjahr (min: 1665):</label>
           <div class="input-group">
             <input type="number" class="form-control" id="pflanzjahr_min" name="pflanzjahr_min" placeholder="min"
               min="1665" max="2023">
@@ -154,8 +156,9 @@
     </div>
     <div class="row">
       <div class="col-md-2">
-      <button id="showTreeCheckboxes" type="button" class="btn btn-primary hide" onclick="checkAll(this)" ontouchstart="checkAll(this)">Uncheck
-        all</button>
+        <button id="showTreeCheckboxes" type="button" class="btn btn-primary hide" onclick="checkAll(this)"
+          ontouchstart="checkAll(this)">Uncheck
+          all</button>
       </div>
     </div>
     <div class="row">
@@ -178,18 +181,18 @@
     </div>
     <div style="height: 200px; overflow: scroll-y;">
       <div class="row" id="colorbox"> </div>
-   </div>
-  <footer class="bg-light py-3">
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <p class="text-muted">Quelle: Stadt Zürich</p>
+    </div>
+    <footer class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <p class="text-muted">Quelle: Stadt Zürich</p>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
-  <script src="{{ url_for('static', filename= 'js/queries.js') }}"></script>
-  <script src="{{ url_for('static', filename= 'js/index.js') }}"></script>
+    </footer>
+    <script src="{{ url_for('static', filename= 'js/queries.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'js/index.js') }}"></script>
 </body>
 
 </html>

@@ -3,6 +3,12 @@ import sqlite3
 from werkzeug.exceptions import abort
 import time
 
+# todo
+# add caching
+# add stats
+# filter by pflanzjahr
+# allow uploading photos
+# put askCPT field to make a query: what is the oldest tree, which trees are older than 1900, how many trees planted in year 2022 etc
 
 app = Flask(__name__)
 
@@ -85,7 +91,27 @@ def trees():
     status = request.args.get('status')
     quartier = request.args.get('quartier')
     kategorie = request.args.get('kategorie')
+    minPflanzJahr = request.args.get('minPflanzJahr')
+    maxPflanzJahr = request.args.get('maxPflanzJahr')
+    minKronendurchMesser = request.args.get('minKronendurchMesser')
+    maxKronendurchMesser = request.args.get('maxKronendurchMesser')
     
+    if(minPflanzJahr or maxPflanzJahr):
+        if (not minPflanzJahr):
+            minPflanzJahr = 0
+        if (not maxPflanzJahr):
+            maxPflanzJahr = 2300
+        pflanzjahr_condition = f"Pflanzjahr BETWEEN {minPflanzJahr} AND {maxPflanzJahr}"
+        conditions.append(pflanzjahr_condition)
+
+    if (minKronendurchMesser or maxKronendurchMesser):
+        if (not minKronendurchMesser):
+            minKronendurchMesser = 0
+        if (not maxKronendurchMesser):
+            maxKronendurchMesser = 1000
+        kronendurchmesser_condition = f"Kronendurchmesser BETWEEN {minKronendurchMesser} AND {maxKronendurchMesser}"
+        conditions.append(kronendurchmesser_condition)
+        
     if baumGattungIds:
         gattung_condition = f"BaumGattungLatId IN ({baumGattungIds})"
         conditions.append(gattung_condition)

@@ -73,7 +73,12 @@ async function getTrees({baumGattunIds = null,
     filterGenauigkeitValue = null,
      filterStatusValue = null, 
      filterQuartierValue = null, 
-     filterKategorieValue = null}) {
+     filterKategorieValue = null,
+     minPflanzJahr = null,
+     maxPflanzJahr = null,
+     minKronendurchMesser = null,
+     maxKronendurchMesser = null,
+     }) {
   let queryParameters = {};
 
   if (baumGattunIds !== null) {
@@ -88,7 +93,10 @@ async function getTrees({baumGattunIds = null,
   addQueryParam(queryParameters, 'genauigkeit', filterGenauigkeitValue);
   addQueryParam(queryParameters, 'status', filterStatusValue);
   addQueryParam(queryParameters, 'quartier', filterQuartierValue);
-  addQueryParam(queryParameters, 'kategorie', filterKategorieValue);
+  addQueryParam(queryParameters, 'minPflanzJahr', minPflanzJahr);
+  addQueryParam(queryParameters, 'maxPflanzJahr', maxPflanzJahr);
+  addQueryParam(queryParameters, 'minKronendurchMesser', minKronendurchMesser);
+  addQueryParam(queryParameters, 'maxKronendurchMesser', maxKronendurchMesser);
 
   // Construct query string from query parameters
   let queryString = '';
@@ -109,18 +117,4 @@ async function getTrees({baumGattunIds = null,
       console.error(error);
     });
   return;
-  let baumGattunIdsStrs = baumGattunIds.join(',')
-  let baumArtIdsStr = baumArtIds.join(',')
-  await fetch('/api/trees?baumGattunIds=' + baumGattunIdsStrs + '&baumArtIds='+ baumArtIdsStr)
-    .then(response => response.json())
-    .then(response => {
-      if (response.success) {
-        visibleTrees = response.data;
-      } else {
-        console.error(data.error);
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
 }

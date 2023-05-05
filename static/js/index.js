@@ -213,13 +213,19 @@ async function applyFilters() {
   const container = document.getElementById("checkbox-container");
   const checkboxes = container.querySelectorAll('input[type="checkbox"]');
 
+  let minPflanzJahr = document.getElementById("pflanzjahr_min").value;
+  let maxPflanzJahr = document.getElementById("pflanzjahr_max").value;
+  
+  let minKronendurchMesser = document.getElementById("kronendurchmesser_min").value;
+  let maxKronendurchMesser = document.getElementById("kronendurchmesser_max").value;
+
   checkboxes.forEach(function (checkbox) {
     if (checkbox.checked) {
       baumArtIds.push(checkbox.value);
     }
   });
   document.getElementById("apply-filter-spinner").classList.remove('hide');
-  await getTrees({ baumArtIds, filterBaumtypValue, filterGenauigkeitValue, filterKategorieValue, filterStatusValue, filterQuartierValue });
+  await getTrees({ baumArtIds, filterBaumtypValue, filterGenauigkeitValue, filterKategorieValue, filterStatusValue, filterQuartierValue, minPflanzJahr, maxPflanzJahr, minKronendurchMesser, maxKronendurchMesser });
   updateMarkers(map, markersLayer);
   document.getElementById("apply-filter-spinner").classList.add('hide');
 }
