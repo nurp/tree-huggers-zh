@@ -44,132 +44,135 @@
 <body>
   <div class="container">
     <div class="row">
-      <div class="col-md-6">
-        <label for="tree-type">Choose a tree type:</label>
-        <select id="tree-type">
-          <option value="">--Please choose a tree type--</option>
-        </select>
+      <div class="col-md-4">
+        <form id="search-id-form" style="border: 1px solid #dee2e6; padding: 10px;">
+          <div class="input-group mb-3">
+            <input type="text" id="search-by-id" class="form-control" placeholder="Search by Tree Id"
+              aria-describedby="search-by-id-button">
+            <button class="btn btn-outline-secondary" type="submit" id="search-by-id-button"
+              onclick="searchById()">Go</button>
+          </div>
+        </form>
       </div>
       <div class="col-md-4">
-        <button class="btn btn-link" type="button" onclick="showAllTrees()">
-          <span class="sr-only">Show all trees </span>
-          <span id="all-trees-spinner" class="spinner-border spinner-border-sm hide" role="status"
-            aria-hidden="true"></span>
-        </button>
-        <!-- <button type="button" class="btn btn-link" onclick="showAllTrees()">Show all trees</button> -->
+        <form id="search-poid-form" style="border: 1px solid #dee6e4; padding: 10px;">
+          <div class="input-group mb-3">
+            <input type="text" id="search-by-poiid" class="form-control" placeholder="Search by PoiId"
+              aria-describedby="search-by-poiid-button">
+            <button class="btn btn-outline-secondary" type="submit" id="search-by-poiid-button"
+              onclick="searchByPoiId()">Go</button>
+          </div>
+        </form>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-        <label class="checkbox-inline">
-          <input type="checkbox" onclick="holdMarkers(this)"> Hold markers
-        </label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="input-group mb-3">
-          <input type="text" id="search-by-id" class="form-control" placeholder="Search by Tree Id"
-            aria-describedby="search-by-id-button">
-          <button class="btn btn-outline-secondary" type="button" id="search-by-id-button"
-            onclick="searchById()">Go</button>
+    <form id="filter-form" style="background-color: #f8f9fa; padding: 10px;">
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <label for="tree-type">Choose a tree type:</label>
+          <select id="tree-type">
+            <option value="">--Please choose a tree type--</option>
+          </select>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="input-group mb-3">
-          <input type="text" id="search-by-poiid" class="form-control" placeholder="Search by PoiId"
-            aria-describedby="search-by-poiid-button">
-          <button class="btn btn-outline-secondary" type="button" id="search-by-poiid-button"
-            onclick="searchByPoiId()">Go</button>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <div class="form-group">
+            <label for="kronendurchmesser">Kronendurchmesser [0-40]):</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="kronendurchmesser_min" name="kronendurchmesser_min"
+                placeholder="min" min="0" max="40">
+              <span class="input-group-text">-</span>
+              <input type="number" class="form-control" id="kronendurchmesser_max" name="kronendurchmesser_max"
+                placeholder="max" min="0" max="40">
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-3 mb-3">
-        <div class="form-group">
-          <label for="kronendurchmesser">Kronendurchmesser [0-40]):</label>
-          <div class="input-group">
-            <input type="number" class="form-control" id="kronendurchmesser_min" name="kronendurchmesser_min"
-              placeholder="min" min="0" max="40">
-            <span class="input-group-text">-</span>
-            <input type="number" class="form-control" id="kronendurchmesser_max" name="kronendurchmesser_max"
-              placeholder="max" min="0" max="40">
+        <div class="col-md-3 mb-3">
+          <label for="quartier">Quartier</label>
+          <select class="form-control" id="quartier">
+            <option value="">Alle</option>
+            <!-- Populate options using JavaScript loop -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="form-group">
+            <label for="pflanzjahr">Pflanzjahr (min: 1665):</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="pflanzjahr_min" name="pflanzjahr_min" placeholder="min"
+                min="1665" max="2023">
+              <span class="input-group-text">-</span>
+              <input type="number" class="form-control" id="pflanzjahr_max" name="pflanzjahr_max" placeholder="max"
+                min="1665" max="2023">
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <label for="quartier">Quartier</label>
-        <select class="form-control" id="quartier">
-          <option value="">Alle</option>
-          <!-- Populate options using JavaScript loop -->
-        </select>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="baumtyp">Baumtyp</label>
+          <select class="form-control" id="baumtyp">
+            <option value="">Alle</option>
+            <!-- Populate options using JavaScript loop -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="genauigkeit">Genauigkeit</label>
+          <select class="form-control" id="genauigkeit">
+            <option value="">Alle</option>
+            <!-- Populate options using JavaScript loop -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="kategorie">Kategorie</label>
+          <select class="form-control" id="kategorie">
+            <option value="">Alle</option>
+            <!-- Populate options using JavaScript loop -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="status">Status</label>
+          <select class="form-control" id="status">
+            <option value="">Alle</option>
+            <!-- Populate options using JavaScript loop -->
+          </select>
+        </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="form-group">
-          <label for="pflanzjahr">Pflanzjahr (min: 1665):</label>
-          <div class="input-group">
-            <input type="number" class="form-control" id="pflanzjahr_min" name="pflanzjahr_min" placeholder="min"
-              min="1665" max="2023">
-            <span class="input-group-text">-</span>
-            <input type="number" class="form-control" id="pflanzjahr_max" name="pflanzjahr_max" placeholder="max"
-              min="1665" max="2023">
+      <div class="row">
+        <div class="col-md-8">
+          <div style="max-height: 200px; overflow-y: scroll;">
+            <div id="checkbox-container"></div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-3 mb-3">
-        <label for="baumtyp">Baumtyp</label>
-        <select class="form-control" id="baumtyp">
-          <option value="">Alle</option>
-          <!-- Populate options using JavaScript loop -->
-        </select>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="genauigkeit">Genauigkeit</label>
-        <select class="form-control" id="genauigkeit">
-          <option value="">Alle</option>
-          <!-- Populate options using JavaScript loop -->
-        </select>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="kategorie">Kategorie</label>
-        <select class="form-control" id="kategorie">
-          <option value="">Alle</option>
-          <!-- Populate options using JavaScript loop -->
-        </select>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="status">Status</label>
-        <select class="form-control" id="status">
-          <option value="">Alle</option>
-          <!-- Populate options using JavaScript loop -->
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
-        <div style="max-height: 200px; overflow-y: scroll;">
-          <div id="checkbox-container"></div>
+      <div class="row">
+        <div class="col-md-2">
+          <button id="showTreeCheckboxes" type="button" class="btn btn-primary hide" onclick="checkAll(this)"
+            ontouchstart="checkAll(this)">Uncheck
+            all</button>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <button id="showTreeCheckboxes" type="button" class="btn btn-primary hide" onclick="checkAll(this)"
-          ontouchstart="checkAll(this)">Uncheck
-          all</button>
+      <div class="row">
+        <div class="col-md-2 d-flex align-items-center">
+          <button type="submit" class="btn btn-primary" onclick="applyFilters()" ontouchstart="applyFilters()">
+            <span class="sr-only">Apply filters</span>
+            <span id="apply-filter-spinner" class="spinner-border spinner-border-sm hide" role="status"
+              aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="col-md-2 d-flex align-items-center ">
+          <label class="checkbox-inline">
+            <input type="checkbox" onclick="holdMarkers(this)"> Hold markers
+          </label>
+        </div>
+        <div class="col-md-2 d-flex align-items-center">
+          <button class="btn btn-link" type="button" onclick="showAllTrees()">
+            <span class="sr-only">Show all trees </span>
+            <span id="all-trees-spinner" class="spinner-border spinner-border-sm hide" role="status"
+              aria-hidden="true"></span>
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <button type="button" class="btn btn-primary" onclick="applyFilters()" ontouchstart="applyFilters()">
-          <span class="sr-only">Apply filters</span>
-          <span id="apply-filter-spinner" class="spinner-border spinner-border-sm hide" role="status"
-            aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
+    </form>
     <div class="row">
       <div class="col-md-8">
         <div id="map" style="width: 700px; height: 500px;"></div>

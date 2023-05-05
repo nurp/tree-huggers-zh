@@ -4,6 +4,8 @@ let allChecked = false;
 let selectedGenusKey = "";
 let map = addMap();
 let markersLayer = new L.LayerGroup();
+let boundsSW = {};
+let boundsNE = {};
 
 function holdMarkers(checkbox) {
   bHoldMarkers = checkbox.checked;
@@ -30,8 +32,52 @@ function clearVisibleTrees() {
   visibleTrees.clear();
 }
 
+function onLocationFound(e) {
+  var radius = e.accuracy / 2;
+  L.marker(e.latlng).addTo(map)
+      .bindPopup("You are within " + radius + " meters from this point").openPopup();
+  L.circle(e.latlng, radius).addTo(map);
+}
+
 function addMap() {
   const map = L.map("map").setView([47.3579481, 8.5035171], 12);
+
+  var locateButton = L.control({position: 'topright'});
+
+  locateButton.onAdd = function(map) {
+    var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+    div.innerHTML = '<button class="btn btn-primary btn-sm" title="Locate me"><i class="fa fa-location-arrow"></i></button>';
+    div.onclick = function() {
+        map.locate({setView: true, maxZoom: 16}); // zoom to current location
+    };
+    return div;
+  };
+
+  locateButton.addTo(map);
+
+  function onLocationFound(e) {
+    var radius = e.accuracy / 2;
+
+    L.marker(e.latlng).addTo(map)
+        .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+    L.circle(e.latlng, radius).addTo(map);
+  }
+
+  // When the user's location is not found, show an error message
+  function onLocationError(e) {
+      alert(e.message);
+  }
+
+  // Listen for the locationfound and locationerror events
+  map.on('locationfound', onLocationFound);
+  map.on('locationerror', onLocationError);
+
+  // Handle when the view changes, update northeast and southwest for filter purposes
+  map.on('moveend', function() {
+    updateMapBounds();
+  });
+
   // var myRenderer = L.svg({ padding: 0.5 });
   // var line = L.polyline( coordinates, { renderer: myRenderer } );
   // var circle = L.circle( center, { renderer: myRenderer } );
@@ -44,6 +90,12 @@ function addMap() {
     }
   ).addTo(map);
   return map;
+}
+
+function updateMapBounds() {
+  var bounds = map.getBounds();
+  boundsSW = bounds.getSouthWest();
+  boundsNE = bounds.getNorthEast();    
 }
 
 function addToVisibleTrees(genusKey, speciesKey) {
@@ -347,6 +399,24 @@ let filterStatusValue = "";
 let filterQuartierValue = "";
 
 async function main() {
+  const filterForm = document.getElementById("filter-form");
+  filterForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    applyFilters();
+  });
+
+  const filterByIdForm = document.getElementById("search-by-id-button");
+  filterByIdForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchById();
+  });
+  
+  const filterByPoIdForm = document.getElementById("search-by-poiid-button");
+  filterByPoIdForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchByPoiId();
+  });
+
   await getTables();
 
   const baumtypDropdown = document.getElementById('baumtyp');
@@ -380,39 +450,7 @@ async function main() {
     // using your AJAX or fetch function
   }
 
-  // await getAllTrees();
-  if (false) {
-    let futureFeatures = getTreeData();
-    let features = await futureFeatures;
-    parseData(features);
-  }
-  // addToVisibleTrees("Prunus", null);
-  // updateMarkers(map, markersLayer);
-  // showTreesOfKind(map, markersLayer, genusMap.get("Prunus"));
+  updateMapBounds();
 };
 
 main();
-
-// fetch('tree.json')
-//   .then(response => response.json())
-//   .then(data => {
-//     // Access the "features" array
-//     const features = data.features;
-//     for (const feat of features) {
-//       const objs = genusMap.get(feat.baumgattunglat);
-//       objs.push({
-//         "coordinates": feat.coordinates,
-//         "objid": feat.objid,
-//         "strasse": feat.strasse,
-//         "baumartlat": feat.baumartlat,
-//         "baumnamelat": feat.baumnamelat,
-//         "baumtyp": feat.baumtyp,
-//         "kronendurchmesser": feat.kronendurchmesser,
-//         "baumtyptext": feat.baumtyptext,
-//         "baumnamedeu": feat.baumnamedeu    
-//     })
-//       genusMap.set(feat.baumgattunglat, [{}, {}, {}]);
-//     }
-//     console.log(features[0]);
-//   })
-//   .catch(error => console.error(error));

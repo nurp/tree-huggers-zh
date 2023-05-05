@@ -97,6 +97,8 @@ async function getTrees({baumGattunIds = null,
   addQueryParam(queryParameters, 'maxPflanzJahr', maxPflanzJahr);
   addQueryParam(queryParameters, 'minKronendurchMesser', minKronendurchMesser);
   addQueryParam(queryParameters, 'maxKronendurchMesser', maxKronendurchMesser);
+  addQueryParam(queryParameters, 'northEast', [boundsNE.lat, boundsNE.lng]);
+  addQueryParam(queryParameters, 'southWest', [boundsSW.lat, boundsSW.lng]);
 
   // Construct query string from query parameters
   let queryString = '';

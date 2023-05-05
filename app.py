@@ -4,9 +4,12 @@ from werkzeug.exceptions import abort
 import time
 
 # todo
+# search in the visible map area
+# locate me button
+# clear filters
+# make enter key "apply filters"
 # add caching
 # add stats
-# filter by pflanzjahr
 # allow uploading photos
 # put askCPT field to make a query: what is the oldest tree, which trees are older than 1900, how many trees planted in year 2022 etc
 
@@ -14,6 +17,7 @@ app = Flask(__name__)
 
 def get_db_connection():
     conn = sqlite3.connect('tree.db')
+    # conn = sqlite3.connect('/home/nurpinar/mysite/tree.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -95,7 +99,15 @@ def trees():
     maxPflanzJahr = request.args.get('maxPflanzJahr')
     minKronendurchMesser = request.args.get('minKronendurchMesser')
     maxKronendurchMesser = request.args.get('maxKronendurchMesser')
+    boundsNE = request.args.get('northEast')
+    boundsSW = request.args.get('southWest')
+
+    ne_lat, ne_lng = boundsNE.split(",")
+    sw_lat, sw_lng = boundsSW.split(",")
     
+    coord_condition = f"Lat BETWEEN {sw_lat} AND {ne_lat} AND Lon BETWEEN {sw_lng} AND {ne_lng}"
+    conditions.append(coord_condition)
+
     if(minPflanzJahr or maxPflanzJahr):
         if (not minPflanzJahr):
             minPflanzJahr = 0
