@@ -46,7 +46,7 @@ function addMap() {
 
   locateButton.onAdd = function(map) {
     var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-    div.innerHTML = '<button class="btn btn-primary btn-sm" title="Locate me"><i class="fa fa-location-arrow"></i></button>';
+    div.innerHTML = '<button title="Locate me">locate me</button>';
     div.onclick = function() {
         map.locate({setView: true, maxZoom: 16}); // zoom to current location
     };
