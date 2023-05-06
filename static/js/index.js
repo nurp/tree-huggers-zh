@@ -32,13 +32,6 @@ function clearVisibleTrees() {
   visibleTrees.clear();
 }
 
-function onLocationFound(e) {
-  var radius = e.accuracy / 2;
-  L.marker(e.latlng).addTo(map)
-      .bindPopup("You are within " + radius + " meters from this point").openPopup();
-  L.circle(e.latlng, radius).addTo(map);
-}
-
 function addMap() {
   const map = L.map("map").setView([47.3579481, 8.5035171], 12);
 
@@ -48,21 +41,12 @@ function addMap() {
     var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
     div.innerHTML = '<button title="Locate me">locate me</button>';
     div.onclick = function() {
-        map.locate({setView: true, maxZoom: 16}); // zoom to current location
+        map.locate({setView: true, maxZoom: 18}); // zoom to current location
     };
     return div;
   };
 
   locateButton.addTo(map);
-
-  function onLocationFound(e) {
-    var radius = e.accuracy / 2;
-
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-    L.circle(e.latlng, radius).addTo(map);
-  }
 
   // When the user's location is not found, show an error message
   function onLocationError(e) {
@@ -70,7 +54,6 @@ function addMap() {
   }
 
   // Listen for the locationfound and locationerror events
-  map.on('locationfound', onLocationFound);
   map.on('locationerror', onLocationError);
 
   // Handle when the view changes, update northeast and southwest for filter purposes
@@ -85,7 +68,7 @@ function addMap() {
   L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      maxZoom: 19,
+      maxZoom: 21,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }
   ).addTo(map);
@@ -175,7 +158,7 @@ function updateMarkers(map, markersLayer) {
         tree['BaumGattungLat'] = baumGattungObj[outerKey];
         tree['BaumArtLat'] = baumArtObj[innerKey];
         visibleColors[baumGattungObj[outerKey]] = colorsObj[outerKey];
-        var marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], { renderer: myRenderer, radius: 3, myData: tree, color: colorsObj[outerKey] })
+        var marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], {radius: 3, myData: tree, color: colorsObj[outerKey] })
           .bindPopup(tree.baumname_deu + " " + baumArtObj[innerKey]);
         marker.on('click', function (e) {
           let innerHtml = "<table>";
