@@ -231,7 +231,7 @@ def getTreeRows(rows):
 def getCompressedResponse(data):
     response = {'success': True, 'data': data}
     json_data = json.dumps(response)
-    compressed_data = gzip.compress(json_data.encode('utf-8'))
+    compressed_data = gzip.compress(json_data.encode('utf-8'), compresslevel=1)
     return Response(compressed_data, mimetype='application/json', headers={
         'Content-Encoding': 'gzip'
     })
