@@ -164,12 +164,11 @@ function updateMarkers(map, markersLayer) {
         tree['BaumArtLat'] = baumArtLat;
         visibleColors[baumGattungLat] = color;
 
-        const marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], {radius: 3, myData: tree.id, color: colorsObj[outerKey] })
+        const marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], {radius: 3, myData: tree, color: colorsObj[outerKey] })
           .bindPopup(tree.baumname_deu + " " + baumArtObj[innerKey]);
         marker.on('click', async function (e) {
-          let treeId = e.target.options.myData;
-          let treeInfo = await searchById(treeId);
-          showTreeInfo(treeInfo);
+          let tree = e.target.options.myData;
+          showTreeInfo(tree);
         });
         markersLayer.addLayer(marker);
       }
@@ -198,11 +197,11 @@ function showTreeInfo(treeInfo) {
   innerHtml += `
   <tr>
     <td>BaumArtLat</td>
-    <td>${baumArtObj[treeInfo['baumartlat_id']]}</td>
+    <td>${treeInfo['BaumArtLat']}</td>
   </tr>
   <tr>
     <td>BaumGattungLat</td>
-    <td>${baumGattungObj[treeInfo['baumgattunglat_id']]}</td>
+    <td>${treeInfo['BaumGattungLat']}</td>
   </tr>
   <tr>
     <td>Genauigkeit</td>
@@ -353,24 +352,6 @@ async function searchByIdClick() {
     });
 }
 
-async function searchByPoiId() {
-  var id = document.querySelector('#search-by-poiid').value;
-  // Do something with the treeId value
-  await fetch(`/api/trees/poiid/${id}`)
-    .then(response => response.json())
-    .then(response => {
-      if (response.success) {
-        visibleTrees = response.data;
-        updateMarkers(map, markersLayer);
-      } else {
-        console.error(data.error);
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
 function fillDropdown(selectObject, keysObject) {
   // sort the dropdowns by their values
   const sortedKeys = Object.entries(keysObject)
@@ -406,11 +387,6 @@ async function main() {
     searchByIdClick();
   });
   
-  const filterByPoIdForm = document.getElementById("search-poiid-form");
-  filterByPoIdForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    searchByPoiId();
-  });
 
   await getTables();
 
