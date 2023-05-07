@@ -154,49 +154,50 @@
       </div>
       <div class="row">
         <div class="col-md-2 d-flex align-items-center">
-          <button type="submit" class="btn btn-primary" onclick="applyFilters()" ontouchstart="applyFilters()">
+          <button type="submit" class="btn btn-primary" ontouchstart="applyFilters()">
             <span class="sr-only">Apply filters</span>
             <span id="apply-filter-spinner" class="spinner-border spinner-border-sm hide" role="status"
               aria-hidden="true"></span>
           </button>
         </div>
-        <div class="col-md-2 d-flex align-items-center ">
-          <label class="checkbox-inline">
-            <input type="checkbox" onclick="holdMarkers(this)"> Hold markers
-          </label>
-        </div>
-        <div class="col-md-2 d-flex align-items-center">
-          <button class="btn btn-link" type="button" onclick="showAllTrees()">
-            <span class="sr-only">Show all trees </span>
-            <span id="all-trees-spinner" class="spinner-border spinner-border-sm hide" role="status"
-              aria-hidden="true"></span>
-          </button>
-        </div>
-      </div>
     </form>
-    <div class="row">
-      <div class="col-md-8">
-        <div id="map" style="width: 700px; height: 500px;"></div>
-        <div id="counter"></div>
-      </div>
-      <div class="col-md-4">
-        <div id="info"></div>
-      </div>
+    <div class="col-md-2 d-flex align-items-center ">
+      <label class="checkbox-inline">
+        <input type="checkbox" onclick="holdMarkers(this)"> Hold markers
+      </label>
     </div>
-    <div style="height: 200px; overflow: scroll-y;">
-      <div class="row" id="colorbox"> </div>
+    <div class="col-md-2 d-flex align-items-center">
+      <button class="btn btn-link" type="button" onclick="showAllTrees()">
+        <span class="sr-only">Show all trees </span>
+        <span id="all-trees-spinner" class="spinner-border spinner-border-sm hide" role="status"
+          aria-hidden="true"></span>
+      </button>
     </div>
-    <footer class="bg-light py-3">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <p class="text-muted">Quelle: Stadt Zürich</p>
-          </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div id="map" style="width: 700px; height: 500px;"></div>
+      <div id="counter"></div>
+    </div>
+    <div class="col-md-4">
+      <div id="info"></div>
+    </div>
+  </div>
+  <div style="height: 200px; overflow: scroll-y;">
+    <div class="row" id="colorbox"> </div>
+  </div>
+  <footer class="bg-light py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="text-muted">Quelle: Stadt Zürich</p>
         </div>
       </div>
-    </footer>
-    <script src="{{ url_for('static', filename= 'js/queries.js') }}"></script>
-    <script src="{{ url_for('static', filename= 'js/index.js') }}"></script>
+    </div>
+  </footer>
+  <script src="{{ url_for('static', filename= 'js/queries.js') }}"></script>
+  <script src="{{ url_for('static', filename= 'js/index.js') }}"></script>
 </body>
 
 </html>

@@ -1,7 +1,9 @@
-from flask import Flask, request, url_for, render_template, jsonify
+from flask import Flask, Response, request, url_for, render_template, jsonify
 import sqlite3
 from werkzeug.exceptions import abort
 import time
+import gzip
+import json
 
 # todo
 # list view to be able to sort trees by age or gattung and mouse over to highlight the tree
@@ -77,9 +79,9 @@ def getTreeByPoiId(id):
 def allTrees():
     conn = get_db_connection()
     rows = conn.execute('SELECT  * FROM Trees;').fetchall()
-    outer_map = getTreeRows(rows)
+    data = getTreeRows(rows)
     conn.close()
-    return {'success': True, 'data': outer_map}
+    return getCompressedResponse(data)
 
 @app.route('/api/trees',  methods=["GET"])
 def trees():
@@ -155,10 +157,9 @@ def trees():
     
     conn = get_db_connection()
     rows = conn.execute(query).fetchall()
-    outer_map = getTreeRows(rows)
-    
     conn.close()
-    return {'success': True, 'data': outer_map}
+    data = getTreeRows(rows)
+    return getCompressedResponse(data)
 
 @app.route('/')
 def index():
@@ -226,6 +227,14 @@ def getTreeRows(rows):
             outer_map[genusId][typeId] = []
         outer_map[genusId][typeId].append(tree)
     return outer_map
+
+def getCompressedResponse(data):
+    response = {'success': True, 'data': data}
+    json_data = json.dumps(response)
+    compressed_data = gzip.compress(json_data.encode('utf-8'))
+    return Response(compressed_data, mimetype='application/json', headers={
+        'Content-Encoding': 'gzip'
+    })
 
 if __name__ == '__main__':
     app.run()

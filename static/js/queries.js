@@ -53,7 +53,7 @@ async function getAllTrees() {
       if (response.success) {
         visibleTrees = response.data;
       } else {
-        console.error(data.error);
+        console.error(response.error);
       }
     })
     .catch(error => {
