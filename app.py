@@ -60,12 +60,30 @@ def getTables():
         conn.close()
 
 @app.route('/api/trees/id/<int:id>')
-def getTreeById(id):
+def getFullTreeinfo(id):
     conn = get_db_connection()
-    rows = conn.execute('SELECT * FROM Trees WHERE Id=?;', (id, ))
-    outer_map = getTreeRows(rows)
+    row = conn.execute('SELECT * FROM Trees WHERE Id=?;', (id, )).fetchone()
     conn.close()
-    return {'success': True, 'data': outer_map}
+    return {'success': True, 'data':  {
+        'id': row['Id'],
+        'poi_id': row['PoiId'],
+        'kategorie_id': row['KategorieId'],
+        'status_id': row['StatusId'],
+        'baumtyp_id': row['BaumtypId'],
+        'genauigkeit_id': row['GenauigkeitId'],
+        'strasse': row['Strasse'],
+        'baumname_lat': row['Baumnamelat'],
+        'baumname_deu': row['Baumnamedeu'],
+        'pflanzjahr': row['Pflanzjahr'],
+        'kronendurchmesser': row['Kronendurchmesser'],
+        'lat': row['Lat'],
+        'lon': row['Lon'],
+        'baumartlat_id': row['QuartierId'],
+        'baumartlat_id': row['BaumArtLatId'],
+        'baumgattunglat_id': row['BaumGattungLatId'],
+        'quartier_id': row['QuartierId']
+    }}
+
 
 @app.route('/api/trees/poiid/<string:id>')
 def getTreeByPoiId(id):
@@ -83,77 +101,76 @@ def allTrees():
     conn.close()
     return getCompressedResponse(data)
 
-@app.route('/api/trees',  methods=["GET"])
+@app.route('/api/filter_trees',  methods=["GET"])
 def trees():
     query = "SELECT * FROM Trees "
     conditions = []
 
-    baumGattungIds = request.args.get('baumGattungIds')
-    baumArtIds = request.args.get('baumArtIds')
-    baumtyp = request.args.get('baumtyp')
-    genauigkeit = request.args.get('genauigkeit')
-    status = request.args.get('status')
-    quartier = request.args.get('quartier')
-    kategorie = request.args.get('kategorie')
-    minPflanzJahr = request.args.get('minPflanzJahr')
-    maxPflanzJahr = request.args.get('maxPflanzJahr')
-    minKronendurchMesser = request.args.get('minKronendurchMesser')
-    maxKronendurchMesser = request.args.get('maxKronendurchMesser')
-    boundsNE = request.args.get('northEast')
-    boundsSW = request.args.get('southWest')
+    id = request.args.get('id')
+    if id:
+        query += f"WHERE Id={id};"
+    else: 
+        baumArtIds = request.args.get('baumArtIds')
+        baumtyp = request.args.get('baumtyp')
+        genauigkeit = request.args.get('genauigkeit')
+        status = request.args.get('status')
+        quartier = request.args.get('quartier')
+        kategorie = request.args.get('kategorie')
+        minPflanzJahr = request.args.get('minPflanzJahr')
+        maxPflanzJahr = request.args.get('maxPflanzJahr')
+        minKronendurchMesser = request.args.get('minKronendurchMesser')
+        maxKronendurchMesser = request.args.get('maxKronendurchMesser')
+        boundsNE = request.args.get('northEast')
+        boundsSW = request.args.get('southWest')
 
-    ne_lat, ne_lng = boundsNE.split(",")
-    sw_lat, sw_lng = boundsSW.split(",")
-    
-    coord_condition = f"Lat BETWEEN {sw_lat} AND {ne_lat} AND Lon BETWEEN {sw_lng} AND {ne_lng}"
-    conditions.append(coord_condition)
-
-    if(minPflanzJahr or maxPflanzJahr):
-        if (not minPflanzJahr):
-            minPflanzJahr = 0
-        if (not maxPflanzJahr):
-            maxPflanzJahr = 2300
-        pflanzjahr_condition = f"Pflanzjahr BETWEEN {minPflanzJahr} AND {maxPflanzJahr}"
-        conditions.append(pflanzjahr_condition)
-
-    if (minKronendurchMesser or maxKronendurchMesser):
-        if (not minKronendurchMesser):
-            minKronendurchMesser = 0
-        if (not maxKronendurchMesser):
-            maxKronendurchMesser = 1000
-        kronendurchmesser_condition = f"Kronendurchmesser BETWEEN {minKronendurchMesser} AND {maxKronendurchMesser}"
-        conditions.append(kronendurchmesser_condition)
+        ne_lat, ne_lng = boundsNE.split(",")
+        sw_lat, sw_lng = boundsSW.split(",")
         
-    if baumGattungIds:
-        gattung_condition = f"BaumGattungLatId IN ({baumGattungIds})"
-        conditions.append(gattung_condition)
+        coord_condition = f"Lat BETWEEN {sw_lat} AND {ne_lat} AND Lon BETWEEN {sw_lng} AND {ne_lng}"
+        conditions.append(coord_condition)
 
-    if baumArtIds:
-        art_condition = f"BaumArtLatId IN ({baumArtIds})"
-        conditions.append(art_condition)
+        if(minPflanzJahr or maxPflanzJahr):
+            if (not minPflanzJahr):
+                minPflanzJahr = 0
+            if (not maxPflanzJahr):
+                maxPflanzJahr = 2300
+            pflanzjahr_condition = f"Pflanzjahr BETWEEN {minPflanzJahr} AND {maxPflanzJahr}"
+            conditions.append(pflanzjahr_condition)
 
-    if baumtyp:
-        baumtyp_condition = f"BaumtypId = '{baumtyp}'"
-        conditions.append(baumtyp_condition)
-    if genauigkeit:
-        genauigkeit_condition = f"GenauigkeitId = {genauigkeit}"
-        conditions.append(genauigkeit_condition)
+        if (minKronendurchMesser or maxKronendurchMesser):
+            if (not minKronendurchMesser):
+                minKronendurchMesser = 0
+            if (not maxKronendurchMesser):
+                maxKronendurchMesser = 1000
+            kronendurchmesser_condition = f"Kronendurchmesser BETWEEN {minKronendurchMesser} AND {maxKronendurchMesser}"
+            conditions.append(kronendurchmesser_condition)
 
-    if status:
-        status_condition = f"StatusId = '{status}'"
-        conditions.append(status_condition)
+        if baumArtIds:
+            art_condition = f"BaumArtLatId IN ({baumArtIds})"
+            conditions.append(art_condition)
 
-    if quartier:
-        quartier_condition = f"QuartierId = '{quartier}'"
-        conditions.append(quartier_condition)
+        if baumtyp:
+            baumtyp_condition = f"BaumtypId = '{baumtyp}'"
+            conditions.append(baumtyp_condition)
+        if genauigkeit:
+            genauigkeit_condition = f"GenauigkeitId = {genauigkeit}"
+            conditions.append(genauigkeit_condition)
 
-    if kategorie:
-        kategorie_condition = f"KategorieId = '{kategorie}'"
-        conditions.append(kategorie_condition)
+        if status:
+            status_condition = f"StatusId = '{status}'"
+            conditions.append(status_condition)
 
-    if len(conditions):
-        query += "WHERE "
-        query += " AND ".join(conditions)
+        if quartier:
+            quartier_condition = f"QuartierId = '{quartier}'"
+            conditions.append(quartier_condition)
+
+        if kategorie:
+            kategorie_condition = f"KategorieId = '{kategorie}'"
+            conditions.append(kategorie_condition)
+
+        if len(conditions):
+            query += "WHERE "
+            query += " AND ".join(conditions)
     
     conn = get_db_connection()
     rows = conn.execute(query).fetchall()

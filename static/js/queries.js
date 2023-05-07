@@ -67,7 +67,7 @@ function addQueryParam(queryParameters, key, value) {
   }
 }
 
-async function getTrees({baumGattunIds = null,
+async function getFilteredTrees({id = null,
    baumArtIds = null,
     filterBaumtypValue = null, 
     filterGenauigkeitValue = null,
@@ -79,34 +79,36 @@ async function getTrees({baumGattunIds = null,
      minKronendurchMesser = null,
      maxKronendurchMesser = null,
      }) {
-  let queryParameters = {};
 
-  if (baumGattunIds !== null) {
-    queryParameters.baumGattunIds = baumGattunIds;
-  }
+       let queryString = '';
+      if (id != null) {
+        queryString = `id=${id}`;
+      } else {
+        let queryParameters = {};
 
-  if (baumArtIds !== null) {
-    queryParameters.baumArtIds = baumArtIds;
-  }
-  
-  addQueryParam(queryParameters, 'baumtyp', filterBaumtypValue);
-  addQueryParam(queryParameters, 'genauigkeit', filterGenauigkeitValue);
-  addQueryParam(queryParameters, 'status', filterStatusValue);
-  addQueryParam(queryParameters, 'quartier', filterQuartierValue);
-  addQueryParam(queryParameters, 'minPflanzJahr', minPflanzJahr);
-  addQueryParam(queryParameters, 'maxPflanzJahr', maxPflanzJahr);
-  addQueryParam(queryParameters, 'minKronendurchMesser', minKronendurchMesser);
-  addQueryParam(queryParameters, 'maxKronendurchMesser', maxKronendurchMesser);
-  addQueryParam(queryParameters, 'northEast', [boundsNE.lat, boundsNE.lng]);
-  addQueryParam(queryParameters, 'southWest', [boundsSW.lat, boundsSW.lng]);
+        if (baumArtIds !== null) {
+          queryParameters.baumArtIds = baumArtIds;
+        }
+        
+        addQueryParam(queryParameters, 'baumtyp', filterBaumtypValue);
+        addQueryParam(queryParameters, 'genauigkeit', filterGenauigkeitValue);
+        addQueryParam(queryParameters, 'status', filterStatusValue);
+        addQueryParam(queryParameters, 'quartier', filterQuartierValue);
+        addQueryParam(queryParameters, 'kategorie', filterKategorieValue);
+        addQueryParam(queryParameters, 'minPflanzJahr', minPflanzJahr);
+        addQueryParam(queryParameters, 'maxPflanzJahr', maxPflanzJahr);
+        addQueryParam(queryParameters, 'minKronendurchMesser', minKronendurchMesser);
+        addQueryParam(queryParameters, 'maxKronendurchMesser', maxKronendurchMesser);
+        addQueryParam(queryParameters, 'northEast', [boundsNE.lat, boundsNE.lng]);
+        addQueryParam(queryParameters, 'southWest', [boundsSW.lat, boundsSW.lng]);
 
-  // Construct query string from query parameters
-  let queryString = '';
-  for (let key in queryParameters) {
-    queryString += `&${key}=${encodeURIComponent(queryParameters[key])}`;
-  }
-  queryString = queryString.substr(1);
-  await fetch(`/api/trees?${queryString}`)
+        // Construct query string from query parameters
+        for (let key in queryParameters) {
+          queryString += `&${key}=${encodeURIComponent(queryParameters[key])}`;
+        }
+        queryString = queryString.substr(1);
+      }
+  await fetch(`/api/filter_trees?${queryString}`)
     .then(response => response.json())
     .then(response => {
       if (response.success) {
@@ -119,4 +121,18 @@ async function getTrees({baumGattunIds = null,
       console.error(error);
     });
   return;
+}
+
+async function getTreeById(id) {
+  const response = await fetch(`/api/trees/id/${id}`);
+  const data = await response.json();
+  try {
+    if (data.success) {
+      return data.data;
+    } else {
+      console.error(response.error);
+    }
+  } catch(error) {
+      console.error(error);
+  };
 }

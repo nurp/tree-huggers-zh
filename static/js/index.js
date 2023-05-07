@@ -271,7 +271,7 @@ async function applyFilters() {
     }
   });
   document.getElementById("apply-filter-spinner").classList.remove('hide');
-  await getTrees({ baumArtIds, filterBaumtypValue, filterGenauigkeitValue, filterKategorieValue, filterStatusValue, filterQuartierValue, minPflanzJahr, maxPflanzJahr, minKronendurchMesser, maxKronendurchMesser });
+  await getFilteredTrees({ baumArtIds, filterBaumtypValue, filterGenauigkeitValue, filterKategorieValue, filterStatusValue, filterQuartierValue, minPflanzJahr, maxPflanzJahr, minKronendurchMesser, maxKronendurchMesser });
   updateMarkers(map, markersLayer);
   document.getElementById("apply-filter-spinner").classList.add('hide');
 }
@@ -336,20 +336,10 @@ function showTreesOfKind(map, markersLayer, prunusMap) {
 
 async function searchByIdClick() {
   var id = document.querySelector('#search-by-id').value;
-  // Do something with the treeId value
-  await fetch(`/api/trees/id/${id}`)
-    .then(response => response.json())
-    .then(response => {
-      if (response.success) {
-        visibleTrees = response.data;
-        updateMarkers(map, markersLayer);
-      } else {
-        console.error(data.error);
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
+  getFilteredTrees({id});
+  updateMarkers(map, markersLayer);
+  // const treeInfo = getTreeById(id);
+  // visibleTrees = response.data;
 }
 
 function fillDropdown(selectObject, keysObject) {
