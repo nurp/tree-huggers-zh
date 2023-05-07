@@ -160,14 +160,14 @@ function updateMarkers(map, markersLayer) {
         const baumArtLat = baumArtObj[innerKey];
         const color = colorsObj[outerKey];
 
-        tree['BaumGattungLat'] = baumGattungLat;
-        tree['BaumArtLat'] = baumArtLat;
         visibleColors[baumGattungLat] = color;
 
-        const marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], {radius: 3, myData: tree, color: colorsObj[outerKey] })
+        const marker = L.circleMarker([parseFloat(tree.lat), parseFloat(tree.lon)], {radius: 3, myData: tree.id, color: colorsObj[outerKey] })
           .bindPopup(tree.baumname_deu + " " + baumArtObj[innerKey]);
         marker.on('click', async function (e) {
-          let tree = e.target.options.myData;
+          // let tree = e.target.options.myData;
+          const treeId = e.target.options.myData;
+          const tree = await getTreeInfo(treeId);
           showTreeInfo(tree);
         });
         markersLayer.addLayer(marker);
@@ -181,14 +181,14 @@ function updateMarkers(map, markersLayer) {
   showColorCodes();
 }
 
-function showTreeInfo(treeInfo) {
+function showTreeInfo(tree) {
   let innerHtml = "<table>";
   const fields = ['id', 'poi_id', 'strasse', 'baumname_deu', 'baumname_lat', 'pflanzjahr', 'kronendurchmesser', 'lat', 'lon']
   fields.forEach((field) => {
     innerHtml += `
     <tr>
       <td>${field}</td>
-      <td>${treeInfo[field]}</td>
+      <td>${tree[field]}</td>
     </tr>
   `;
   });
@@ -197,35 +197,35 @@ function showTreeInfo(treeInfo) {
   innerHtml += `
   <tr>
     <td>BaumArtLat</td>
-    <td>${treeInfo['BaumArtLat']}</td>
+    <td>${baumArtObj[tree['baumartlat_id']]}</td>
   </tr>
   <tr>
     <td>BaumGattungLat</td>
-    <td>${treeInfo['BaumGattungLat']}</td>
+    <td>${baumGattungObj[tree['baumgattunglat_id']]}</td>
   </tr>
   <tr>
     <td>Genauigkeit</td>
-    <td>${genauigkeitObj[treeInfo['genauigkeit_id']]}</td>
+    <td>${genauigkeitObj[tree['genauigkeit_id']]}</td>
   </tr>
   <tr>
     <td>Status</td>
-    <td>${statusObj[treeInfo['status_id']]}</td>
+    <td>${statusObj[tree['status_id']]}</td>
   </tr>
   <tr>
     <td>Status</td>
-    <td>${quartierObj[treeInfo['quartier_id']]}</td>
+    <td>${quartierObj[tree['quartier_id']]}</td>
   </tr>
   <tr>
     <td>Kategorie</td>
-    <td>${kategorieObj[treeInfo['kategorie_id']]}</td>
+    <td>${kategorieObj[tree['kategorie_id']]}</td>
   </tr>
   <tr>
     <td>Baumtyp</td>
-    <td>${baumTypeObj[treeInfo['baumtyp_id']]}</td>
+    <td>${baumTypeObj[tree['baumtyp_id']]}</td>
   </tr>
 `;
   innerHtml += '</table>';
-  innerHtml += `<a href="https://www.google.com/maps/search/?api=1&query=${treeInfo['lat']},${treeInfo['lon']}" target="_blank">show on Google Maps</td>`;
+  innerHtml += `<a href="https://www.google.com/maps/search/?api=1&query=${tree['lat']},${tree['lon']}" target="_blank">show on Google Maps</td>`;
   document.getElementById("info").innerHTML = innerHtml;
 }
 
@@ -338,8 +338,6 @@ async function searchByIdClick() {
   var id = document.querySelector('#search-by-id').value;
   getFilteredTrees({id});
   updateMarkers(map, markersLayer);
-  // const treeInfo = getTreeById(id);
-  // visibleTrees = response.data;
 }
 
 function fillDropdown(selectObject, keysObject) {

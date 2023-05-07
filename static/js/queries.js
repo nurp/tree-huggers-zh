@@ -123,7 +123,7 @@ async function getFilteredTrees({id = null,
   return;
 }
 
-async function getTreeById(id) {
+async function getTreeInfo(id) {
   const response = await fetch(`/api/trees/id/${id}`);
   const data = await response.json();
   try {

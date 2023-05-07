@@ -78,7 +78,6 @@ def getFullTreeinfo(id):
         'kronendurchmesser': row['Kronendurchmesser'],
         'lat': row['Lat'],
         'lon': row['Lon'],
-        'baumartlat_id': row['QuartierId'],
         'baumartlat_id': row['BaumArtLatId'],
         'baumgattunglat_id': row['BaumGattungLatId'],
         'quartier_id': row['QuartierId']
@@ -220,21 +219,19 @@ def getTreeRows(rows):
     for row in rows:
         tree = {
                 'id': row['Id'],
-                'poi_id': row['PoiId'],
-                'quartier': row['Quartier'],
-                'strasse': row['Strasse'],
-                'baumname_deu': row['Baumnamedeu'],
+                # 'poi_id': row['PoiId'],
+                # 'kategorie_id': row['KategorieId'],
+                # 'status_id': row['StatusId'],
+                # 'baumtyp_id': row['BaumtypId'],
+                # 'genauigkeit_id': row['GenauigkeitId'],
+                # 'strasse': row['Strasse'],
                 'baumname_lat': row['Baumnamelat'],
-                'pflanzjahr': row['Pflanzjahr'],
-                'kronendurchmesser': row['Kronendurchmesser'],
+                'baumname_deu': row['Baumnamedeu'],
+                # 'pflanzjahr': row['Pflanzjahr'],
+                # 'kronendurchmesser': row['Kronendurchmesser'],
                 'lat': row['Lat'],
-                'lon': row['Lon'],
-                'genauigkeit_id': row['GenauigkeitId'],
-                'status_id': row['StatusId'],
-                'quartier_id': row['QuartierId'],
-                'quartier_id': row['QuartierId'],
-                'kategorie_id': row['KategorieId'],
-                'baumtyp_id': row['BaumtypId']
+                'lon': row['Lon']
+                # 'quartier_id': row['QuartierId'],
             }
         genusId = row['BaumGattungLatId']
         typeId = row['BaumArtLatId']
