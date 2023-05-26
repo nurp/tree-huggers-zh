@@ -32,6 +32,10 @@ function clearVisibleTrees() {
   visibleTrees.clear();
 }
 
+function onLocationFound(e) {
+  L.marker(e.latlng).addTo(map);
+}
+
 function addMap() {
   const map = L.map("map").setView([47.3579481, 8.5035171], 12);
 
@@ -48,6 +52,7 @@ function addMap() {
 
   locateButton.addTo(map);
 
+  map.on('locationfound', onLocationFound);
   // When the user's location is not found, show an error message
   function onLocationError(e) {
       alert(e.message);
@@ -68,7 +73,8 @@ function addMap() {
   L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      maxZoom: 21,
+      maxNativeZoom: 19,
+      maxZoom: 22,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }
   ).addTo(map);

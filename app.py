@@ -6,8 +6,13 @@ import gzip
 import json
 
 # todo
+# throw genaugkeit
+# typeahead and include the german/english names
+# add to favorites button
+# feedback section
 # list view to be able to sort trees by age or gattung and mouse over to highlight the tree
-# clear filters
+# reset filters
+# quartier in the tree info page
 # add caching
 # add stats
 # allow uploading photos
