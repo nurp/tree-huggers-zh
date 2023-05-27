@@ -4,6 +4,7 @@ let allChecked = false;
 let selectedGenusKey = "";
 let map = addMap();
 let markersLayer = new L.LayerGroup();
+let currentLocationMarker = null;
 let boundsSW = {};
 let boundsNE = {};
 
@@ -33,7 +34,12 @@ function clearVisibleTrees() {
 }
 
 function onLocationFound(e) {
-  L.marker(e.latlng).addTo(map);
+  if (currentLocationMarker == null) {
+    currentLocationMarker = L.marker(e.latlng);
+    currentLocationMarker.addTo(map);
+  } else {
+    currentLocationMarker.setLatLng(e.latlng);
+  }
 }
 
 function addMap() {

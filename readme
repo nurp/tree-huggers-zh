@@ -1,1 +1,11 @@
 to run locally: flask run --reload
+to upload to pythonanywhere
+git push github master
+go to https://www.pythonanywhere.com/user/nurpinar/consoles/
+cd tree-huggers-zh/
+git checkout -p to discard local changes
+pull
+vi app.py 
+uncomment the sqlite line
+go to web: https://www.pythonanywhere.com/user/nurpinar/webapps/#tab_id_nurpinar_pythonanywhere_com
+hit reload button
